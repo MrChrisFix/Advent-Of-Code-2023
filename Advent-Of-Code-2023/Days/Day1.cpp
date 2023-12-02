@@ -10,37 +10,29 @@ static void pop_front(string &s)
 		return;
 	}
 
-	for (int i = 0; i < s.size() - 1; i++)
+	for (int i = 1; i < s.size(); i++)
 	{
-		s[i] = s[i + 1];
+		s[i-1] = s[i];
 	}
 	s.pop_back();
 }
 
-bool isRelevant(string test)
+//Returns -1 if irrelevant text, 0 if uncomplete number, 1-9 if number
+int checkForNumber(string text)
 {
 	string numbers[9] = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 
 	for (int i = 0; i < 9; i++)
 	{
-		if (numbers[i].starts_with(test))
-			return true;
+		if (numbers[i].starts_with(text))
+		{
+			if (numbers[i] == text)
+				return i + 1;
+			else
+				return 0;
+		}
 	}
-	return false;
-}
-
-int checkIfNumber(string test)
-{
-	if (test == "one") return 1;
-	if (test == "two") return 2;
-	if (test == "three") return 3;
-	if (test == "four") return 4;
-	if (test == "five") return 5;
-	if (test == "six") return 6;
-	if (test == "seven") return 7;
-	if (test == "eight") return 8;
-	if (test == "nine") return 9;
-	return 0;
+	return -1;
 }
 
 string Day1_Part1(stringstream& input)
@@ -90,19 +82,19 @@ string Day1_Part2(stringstream& input)
 				word.push_back(sign);
 				do
 				{
-					if (isRelevant(word))
-					{
-						int num = checkIfNumber(word);
-						if (num != 0)
-						{
-							numbersInLine.push_back(num);
-							pop_front(word);
-						}
+					int num = checkForNumber(word);
+
+					if(num == 0)
 						break;
+					else if (num < 0)
+					{
+						pop_front(word);
 					}
 					else
 					{
+						numbersInLine.push_back(num);
 						pop_front(word);
+						break;
 					}
 				} while (word.size() > 0);				
 			}
